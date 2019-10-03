@@ -24,9 +24,11 @@ LIMIT 3;
 
 /*--------------------Challenge-4--------------------------------------*/
 
-SELECT authors.au_id AS author_id, authors.au_lname AS last_name, authors.au_fname AS first_name, SUM(NULLIF(sales.qty, 0)) AS total
-FROM authors, titles, titleauthor, sales
-WHERE titleauthor.au_id = authors.au_id AND titleauthor.title_id = titles.title_id AND titles.title_id = sales.title_id
+SELECT authors.au_id AS author_id, authors.au_lname AS last_name, authors.au_fname AS first_name, SUM(COALESCE(sales.qty, 0)) AS total
+FROM authors
+LEFT JOIN titleauthor ON titleauthor.au_id = authors.au_id
+LEFT JOIN titles ON titleauthor.title_id = titles.title_id
+LEFT JOIN sales ON titles.title_id = sales.title_id
 GROUP BY author_id, last_name, first_name
 ORDER BY total DESC
 
